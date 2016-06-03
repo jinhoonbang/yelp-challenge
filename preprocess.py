@@ -6,6 +6,9 @@ from PIL import Image
 import glob
 import pickle
 
+n_class = 5
+stop_words = ["Restaurants"]
+
 curr_dir = os.path.dirname(os.path.realpath(__file__))
 print(curr_dir)
 print('/'.join(("data", "pid_bid.csv")))
@@ -71,9 +74,13 @@ for cats in list_cats:
         else:
             m[c] += 1
 
+####Remove stop words
+for w in stop_words:
+    del m[w]
+
 sorted_m = sorted(m.items(), key=operator.itemgetter(1))
 sorted_m.reverse()
-sorted_m = sorted_m[:20]
+sorted_m = sorted_m[:n_class]
 
 tags = []
 for x in sorted_m:
@@ -104,7 +111,7 @@ df_pid = df_pid.drop('caption', axis = 1)
 
 #Iterate through all images
 # x = 0
-# y = 0
+# y = 0hotos
 # counter = 0
 
 #Standard size = 410 x 390
@@ -167,8 +174,8 @@ df = pd.concat([df_bid, df_label], axis=1)
 df = pd.merge(df_pid, df, on='business_id')
 df = df.drop('business_id', axis=1)
 
-base_width = 50
-base_height = 50
+base_width = 28
+base_height = 28
 
 feature = []
 
@@ -195,7 +202,7 @@ print("data.shape = {}", data.shape)
 dimension = np.array([data.shape[0], data.shape[1]])
 data=np.append(dimension,data)
 data.astype("float64")
-data.tofile(os.path.join(curr_dir, "raw_data.bin"))
+data.tofile(os.path.join(curr_dir, "data.bin"))
 
 print(m)
 
